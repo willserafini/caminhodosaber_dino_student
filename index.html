@@ -22,7 +22,7 @@
             padding: 0;
             font-family: var(--font-corpo);
             background: #e8f5e9; /* Um verde bem clarinho */
-            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23a5d6a7" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23a5d6a7" fill-opacity="0.4"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2-H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
             color: var(--cor-texto);
             overflow-x: hidden;
         }
@@ -37,11 +37,6 @@
             width: 100vw;
             transition: opacity 0.5s ease-out;
             text-align: center;
-        }
-
-        .logo-escola {
-            width: 150px;
-            margin-bottom: 20px;
         }
 
         #botao-iniciar {
@@ -98,7 +93,7 @@
             text-align: center;
             border-top: 10px solid var(--cor-primaria);
         }
-        
+
         .titulo-mostra {
             font-family: var(--font-titulo);
             font-size: 2.5rem;
@@ -113,13 +108,34 @@
             margin-bottom: 30px;
         }
 
+        .container-fotos {
+            position: relative; /* Essencial para o posicionamento da foto-aluno */
+            margin-bottom: 80px; /* Aumenta a margem para dar espaço para a foto e o botão */
+            line-height: 0; /* Remove espaço extra abaixo da imagem */
+        }
+
+        .foto-dino-principal {
+            max-width: 100%; 
+            height: auto;
+            border-radius: 15px; 
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); 
+            border: 5px solid var(--cor-secundaria); 
+        }
+
         .foto-aluno {
-            width: 200px;
-            height: 200px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            border: 8px solid var(--cor-secundaria);
-            margin-bottom: 30px;
+            border: 5px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            
+            /* Posicionamento */
+            position: absolute;
+            bottom: -60px; /* Metade para dentro, metade para fora */
+            left: 50%;
+            transform: translateX(-50%); /* Centraliza horizontalmente */
+            z-index: 10;
         }
         
         #botao-audio {
@@ -145,23 +161,14 @@
 
         /* Estilos para telas menores (celulares) */
         @media (max-width: 600px) {
-            .titulo-mostra {
-                font-size: 2rem;
-            }
-            .mensagem {
-                font-size: 1rem;
-            }
-            #botao-iniciar {
-                font-size: 1.2rem;
-                padding: 15px 30px;
-            }
-            .foto-aluno {
-                width: 150px;
-                height: 150px;
-            }
-            .cartao {
-                padding: 20px;
-            }
+            .titulo-mostra { font-size: 2rem; }
+            .mensagem { font-size: 1rem; }
+            #botao-iniciar { font-size: 1.2rem; padding: 15px 30px; }
+            .foto-aluno { width: 100px; height: 100px; bottom: -50px; }
+            .container-fotos { margin-bottom: 60px; }
+            .foto-dino-principal { border-width: 4px; }
+            .cartao { padding: 20px; }
+            #botao-audio { font-size: 1rem; padding: 12px 25px; }
         }
     </style>
 </head>
@@ -173,12 +180,14 @@
 
     <div id="pagina-conteudo">
         <div class="cartao">
-            <h1 class="titulo-mostra">Mostra Caminho das Artes 2025</h1>
+            <h1 class="titulo-mostra">Caminho do Saber 2025</h1>
             
-            <p id="mensagem-personalizada" class="mensagem">
-                </p>
+            <p id="mensagem-personalizada" class="mensagem"></p>
 
-            <img id="foto-aluno" src="" alt="Foto do Aluno" class="foto-aluno">
+            <div class="container-fotos">
+                <img id="foto-aluno-dino" src="" alt="Aluno com Dinossauro" class="foto-dino-principal">
+                <img id="foto-aluno" src="" alt="Foto do Aluno" class="foto-aluno">
+            </div>
 
             <audio id="audio-aluno" src=""></audio>
             
@@ -199,49 +208,44 @@
             };
         }
 
-        // Aguarda o carregamento completo da página
         window.onload = function() {
             const dadosAluno = getURLParams();
-            const alunoNome = dadosAluno.aluno || "Criança"; // Nome padrão
+            const alunoNome = dadosAluno.aluno || "Criança";
             const alunoSexo = dadosAluno.sexo ? dadosAluno.sexo.toUpperCase() : 'M';
 
-            // Elementos da página
             const paginaInicial = document.getElementById('pagina-inicial');
             const paginaConteudo = document.getElementById('pagina-conteudo');
             const botaoIniciar = document.getElementById('botao-iniciar');
             
             const mensagemElemento = document.getElementById('mensagem-personalizada');
+            const fotoDinoElemento = document.getElementById('foto-aluno-dino');
             const fotoElemento = document.getElementById('foto-aluno');
             const audioBotao = document.getElementById('botao-audio');
             const audioTextoBotao = document.getElementById('texto-botao-audio');
             const audioElemento = document.getElementById('audio-aluno');
 
-            // Personaliza o conteúdo com base no sexo
             let artigo = alunoSexo === 'F' ? 'a' : 'o';
             let pronome = alunoSexo === 'F' ? 'ela' : 'ele';
 
-            // Monta a mensagem final
             const mensagem = `Querida família, seja bem-vinda à Mostra Caminho das Artes 2025! 🌟<br>
                 Durante este projeto, ${artigo} <strong>${alunoNome}</strong> explorou com curiosidade e encantamento o incrível mundo dos dinossauros 🦖✨.<br>
                 Agora, ${pronome} quer dividir com você um pedacinho dessa jornada.<br>
                 Aumente o som, aperte o play e venha se encantar junto com a gente!`;
 
-            // Preenche os elementos da página
             mensagemElemento.innerHTML = mensagem;
             audioTextoBotao.innerText = `Ouvir ${artigo} ${alunoNome}`;
             
-            // Define os caminhos dos arquivos com base no nome do aluno (em minúsculo)
             const nomeArquivo = alunoNome.toLowerCase();
+            fotoDinoElemento.src = `imagens/${nomeArquivo}_dino.png`;
             fotoElemento.src = `imagens/${nomeArquivo}.jpeg`;
             audioElemento.src = `audios/${nomeArquivo}.mp4`;
             
-            // Lógica dos botões
             botaoIniciar.addEventListener('click', function() {
                 paginaInicial.style.opacity = '0';
                 setTimeout(() => {
                     paginaInicial.style.display = 'none';
                     paginaConteudo.style.display = 'flex';
-                }, 500); // Espera a animação de fade-out terminar
+                }, 500);
             });
 
             audioBotao.addEventListener('click', function() {
@@ -249,7 +253,7 @@
                     audioElemento.play();
                 } else {
                     audioElemento.pause();
-                    audioElemento.currentTime = 0; // Reinicia o áudio
+                    audioElemento.currentTime = 0;
                 }
             });
         };
