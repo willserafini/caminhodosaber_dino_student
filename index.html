@@ -205,7 +205,8 @@
             const params = new URLSearchParams(window.location.search);
             return {
                 aluno: params.get('aluno'),
-                sexo: params.get('sexo')
+                sexo: params.get('sexo'),
+                img: params.get('img'),
             };
         }
 
@@ -213,6 +214,7 @@
             const dadosAluno = getURLParams();
             const alunoNome = dadosAluno.aluno || "Criança";
             const alunoSexo = dadosAluno.sexo ? dadosAluno.sexo.toUpperCase() : 'M';
+            const alunoImg = dadosAluno.img;
 
             const paginaInicial = document.getElementById('pagina-inicial');
             const paginaConteudo = document.getElementById('pagina-conteudo');
@@ -236,7 +238,7 @@
             mensagemElemento.innerHTML = mensagem;
             audioTextoBotao.innerText = `Ouvir ${artigo} ${alunoNome}`;
             
-            const nomeArquivo = alunoNome.toLowerCase();
+            const nomeArquivo = alunoImg || alunoNome.toLowerCase();
             fotoDinoElemento.src = `imagens/${nomeArquivo}_dino.png`;
             fotoElemento.src = `imagens/${nomeArquivo}.jpeg`;
             audioElemento.src = `audios/${nomeArquivo}.mp4`;
